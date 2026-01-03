@@ -9,12 +9,12 @@ public class ThreadTime {
   private static class MonRunnable implements Runnable {
 
     private int id;
-    //private long delai;
+    private long delai;
     private int repeatCount;
 
-    public MonRunnable(int id, int repeatCount) {
+    public MonRunnable(int id, long delai, int repeatCount) {
       this.id = id;
-      //this.delai = delai;
+      this.delai = delai;
       this.repeatCount = repeatCount;
     }
 
@@ -27,7 +27,14 @@ public class ThreadTime {
 
       // On répète l'affichage un nombre fini de fois pour pouvoir tester facilement
       for (int i = 0; i < repeatCount; i++) {
-    	  line.append(token).append(" ");
+    	  try {
+    		  line.append(token).append(" ");
+    		  Thread.sleep(delai);              // pause pour simuler un rythme
+              System.out.print(token + " ");    // affichage sans retour à la ligne
+    	  } catch (InterruptedException e) {
+              e.printStackTrace();
+              return;                           // arrêt propre du thread
+            }
       }
       System.out.println(line.toString());
     }
@@ -52,9 +59,9 @@ public class ThreadTime {
 	    for (int id = 1; id <= 5; id++) {
 
 	      // Plus id est petit, plus le délai est court => 1- s'affiche très souvent
-	      //long delai = 120L * id;
+	      long delai = 120L * id;
 
-	      Thread thread = new Thread(new MonRunnable(id, repeatCount));
+	      Thread thread = new Thread(new MonRunnable(id, delai, repeatCount));
 	      thread.start();
 	    }
 	  }
